@@ -35,22 +35,24 @@ async function run() {
         const userCollection = client.db('users').collection('data')
         const reviewCollection = client.db('review').collection('data')
 
-        // puting user info 
-        app.put('/user/:email', async (req, res) => {
-            const email = req.params.email;
-            const user = req.body;
-            const filter = { email: email };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: user,
-            };
-            const result = await userCollection.updateOne(filter, updateDoc, options);
-            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-            res.send({ result, token });
-        })
         // getting all the items 
         app.get('/items', async (req, res) => {
             const result = await ItemsCollocetion.find().toArray();
+            res.send(result)
+        })
+
+        // getting the user profile data
+        app.get('/userProfile/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const result = await userCollection.findOne(filter);
+            res.send(result);
+        })
+        // getting the item data
+        app.get('/item/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: ObjectId(id) }
+            const result = await ItemsCollocetion.findOne(quary)
             res.send(result)
         })
 
@@ -73,19 +75,18 @@ async function run() {
             res.send(result);
         })
 
-        // getting the user profile data
-        app.get('/userProfile/:email', async (req, res) => {
+        // puting user info 
+        app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
+            const user = req.body;
             const filter = { email: email };
-            const result = await userCollection.findOne(filter);
-            res.send(result);
-        })
-        // getting the item data
-        app.get('/item/:id', async (req, res) => {
-            const id = req.params.id;
-            const quary = { _id: ObjectId(id) }
-            const result = await ItemsCollocetion.findOne(quary)
-            res.send(result)
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+            res.send({ result, token });
         })
 
     } finally {
