@@ -34,6 +34,7 @@ async function run() {
         const ItemsCollocetion = client.db('items').collection('data')
         const userCollection = client.db('users').collection('data')
         const reviewCollection = client.db('review').collection('data')
+        const orderCollection = client.db('Order').collection('data')
 
         // puting user info 
         app.put('/user/:email', async (req, res) => {
@@ -73,6 +74,13 @@ async function run() {
             res.send(result);
         })
 
+        // post the user order
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+
         // getting the user profile data
         app.get('/userProfile/:email', async (req, res) => {
             const email = req.params.email;
@@ -80,20 +88,21 @@ async function run() {
             const result = await userCollection.findOne(filter);
             res.send(result);
         })
+
+        // getting the user order data
+        app.get('/orders/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            console.log(email, query)
+            const result = await orderCollection.find(query).toArray();
+            console.log(result)
+            res.send(result);
+        })
         // getting the item data
         app.get('/item/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const quary = { _id: ObjectId(id) }
             const result = await ItemsCollocetion.findOne(quary)
-            res.send(result)
-        })
-
-        // getting the item data
-        app.get('/item/:email', verifyJWT, async (req, res) => {
-            const email = req.params.email;
-            const quary = { email: email };
-            console.log(email, quary)
-            const result = await ItemsCollocetion.find(quary).toArray()
             res.send(result)
         })
 
