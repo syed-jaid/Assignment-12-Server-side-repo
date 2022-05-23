@@ -66,7 +66,27 @@ async function run() {
             res.send(result);
         })
 
+        // updateing the user review 
+        app.post('/review', async (req, res) => {
+            const user = req.body;
+            const result = await reviewCollection.insertOne(user);
+            res.send(result);
+        })
 
+        // getting the user profile data
+        app.get('/userProfile/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const result = await userCollection.findOne(filter);
+            res.send(result);
+        })
+        // getting the item data
+        app.get('/item/:id', async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: ObjectId(id) }
+            const result = await ItemsCollocetion.findOne(quary)
+            res.send(result)
+        })
 
     } finally {
         // await client.close();
