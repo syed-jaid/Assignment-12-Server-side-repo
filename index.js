@@ -48,6 +48,24 @@ async function run() {
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
             res.send({ result, token });
         })
+        // getting all the items 
+        app.get('/items', async (req, res) => {
+            const result = await ItemsCollocetion.find().toArray();
+            res.send(result)
+        })
+
+        // updateing the user profile 
+        app.put('/userUpdate', async (req, res) => {
+            const user = req.body;
+            const email = user.email;
+            const filter = { email: email };
+            const updateDoc = {
+                $set: { user },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
 
 
     } finally {
