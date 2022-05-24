@@ -116,7 +116,6 @@ async function run() {
             res.send(result)
         })
 
-
         app.post('/create-payment-intent', verifyJWT, async (req, res) => {
             const service = req.body;
             const price = service.price;
@@ -128,6 +127,22 @@ async function run() {
             });
             res.send({ clientSecret: paymentIntent.client_secret })
         });
+
+        // patching  the data to the prders
+        app.patch('/orderPay/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            console.log(id, filter, payment)
+            const updatedDoc = {
+                $set: {
+                    paid: 'paid',
+                    transactionId: payment.transactionId
+                }
+            }
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(updatedOrder);
+        })
 
 
     } finally {
