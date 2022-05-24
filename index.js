@@ -82,6 +82,7 @@ async function run() {
             res.send(result);
         })
 
+
         // getting the user profile data
         app.get('/userProfile/:email', async (req, res) => {
             const email = req.params.email;
@@ -97,6 +98,7 @@ async function run() {
             const result = await orderCollection.find(query).toArray();
             res.send(result);
         })
+
         // getting the item data
         app.get('/item/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
@@ -104,6 +106,29 @@ async function run() {
             const result = await ItemsCollocetion.findOne(quary)
             res.send(result)
         })
+
+
+        // getting the ordered item data 
+        app.get('/OrderItem/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: ObjectId(id) }
+            const result = await orderCollection.findOne(quary)
+            res.send(result)
+        })
+
+
+        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+            const service = req.body;
+            const price = service.price;
+            const amount = price * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+            res.send({ clientSecret: paymentIntent.client_secret })
+        });
+
 
     } finally {
         // await client.close();
