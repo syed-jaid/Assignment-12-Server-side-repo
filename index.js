@@ -4,6 +4,7 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const stripe = require('stripe')(process.env.API_KEY_STRIP)
 const port = process.env.PROT || 5000
 
 
@@ -90,12 +91,10 @@ async function run() {
         })
 
         // getting the user order data
-        app.get('/orders/:email', async (req, res) => {
+        app.get('/orders/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
-            console.log(email, query)
             const result = await orderCollection.find(query).toArray();
-            console.log(result)
             res.send(result);
         })
         // getting the item data
