@@ -58,6 +58,15 @@ async function run() {
         })
 
 
+        // Delete the order by id
+        app.delete('/items/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await ItemsCollocetion.deleteOne(query)
+            res.send(result);
+        })
+
+
         app.put('/user/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
