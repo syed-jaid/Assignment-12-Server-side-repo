@@ -103,6 +103,12 @@ async function run() {
             res.send(result);
         })
 
+        //getting all the user review 
+        app.get('/review', async (req, res) => {
+            const result = await reviewCollection.find({}).toArray();
+            res.send(result);
+        })
+
         // updateing the user review 
         app.post('/review', async (req, res) => {
             const user = req.body;
@@ -141,7 +147,7 @@ async function run() {
             res.send(result);
         })
 
-        // Delete the order by id
+        // Delete the order by id from database
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
