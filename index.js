@@ -4,6 +4,7 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const { query } = require('express');
 const stripe = require('stripe')(process.env.API_KEY_STRIP)
 const port = process.env.PROT || 5000
 
@@ -70,6 +71,14 @@ async function run() {
         // getting all the user
         app.get('/users', async (req, res) => {
             const result = await userCollection.find({}).toArray()
+            res.send(result)
+        })
+
+        // getting all the user
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await userCollection.findOne(query)
             res.send(result)
         })
 
@@ -148,6 +157,28 @@ async function run() {
             res.send(result)
         })
 
+        // getting the ordered item data 
+        app.get('/Orders', verifyJWT, async (req, res) => {
+            const result = await orderCollection.find().toArray();
+            res.send(result)
+        })
+
+
+        // updateing the user order 
+        app.put('/orderUpdate/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    paid: 'shipped',
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc);
+            console.log(result)
+            res.send(result);
+        })
+
+
         app.post('/create-payment-intent', verifyJWT, async (req, res) => {
             const service = req.body;
             const price = service.price;
@@ -165,7 +196,6 @@ async function run() {
             const id = req.params.id;
             const payment = req.body;
             const filter = { _id: ObjectId(id) };
-            console.log(id, filter, payment)
             const updatedDoc = {
                 $set: {
                     paid: 'paid',
