@@ -99,6 +99,13 @@ async function run() {
             res.send(result);
         })
 
+        // post the admin product
+        app.post('/productInsert', async (req, res) => {
+            const product = req.body;
+            const result = await ItemsCollocetion.insertOne(product);
+            res.send(result);
+        })
+
 
         // getting the user profile data
         app.get('/userProfile/:email', async (req, res) => {
