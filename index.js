@@ -65,7 +65,7 @@ async function run() {
             res.send(result);
         })
 
-
+        // make admine 
         app.put('/user/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
