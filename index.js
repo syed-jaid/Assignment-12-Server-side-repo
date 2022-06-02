@@ -169,12 +169,12 @@ async function run() {
             res.send(result)
         })
 
-        // getting the ordered item data 
+        // getting the ordered item data for datadase
         app.get('/Orders', verifyJWT, async (req, res) => {
             const result = await orderCollection.find().toArray();
             res.send(result)
+            console.log(result)
         })
-
 
         // updateing the user order 
         app.put('/orderUpdate/:id', async (req, res) => {
