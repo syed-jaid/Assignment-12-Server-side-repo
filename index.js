@@ -26,7 +26,6 @@ function verifyJWT(req, res, next) {
     })
 }
 
-
 const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASS_WORD}@final-assignment-12.jqhcf.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -55,7 +54,6 @@ async function run() {
             const result = await ItemsCollocetion.find().toArray();
             res.send(result)
         })
-
 
         // Delete the order by id
         app.delete('/items/:id', async (req, res) => {
